@@ -16,17 +16,18 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, getCurrentInstance } from 'vue'
+  import { ref, onMounted } from 'vue'
   import * as echarts from 'echarts'
   import type { ChartData } from '@/types'
+  import { useApi, safeApiCall } from '@/utils/api'
 
-  const { proxy } = getCurrentInstance()
+  const api = useApi()
   const radarChart = ref<HTMLElement | null>(null)
   const barChart = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
     try {
-      const chartRes = await proxy!.$api.getChartData()
+      const chartRes = await safeApiCall(api.getChartData())
       if (chartRes && chartRes.code === 200) {
         const { subjectRadar, classDistribution } = chartRes.data
 

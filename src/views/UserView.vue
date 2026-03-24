@@ -95,11 +95,12 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
+    import { ref, reactive, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import type { Student, StudentQueryParams, StudentForm, SearchForm } from '@/types'
+    import { useApi, safeApiCall } from '@/utils/api'
 
-    const { proxy } = getCurrentInstance()
+    const api = useApi()
     const tableData = ref<Student[]>([])
     const total = ref(0)
     const pageSize = ref(10)
@@ -115,15 +116,17 @@
     const fetchData = async () => {
         loading.value = true
         try {
-            const params = {
+            const params: StudentQueryParams = {
                 name: searchForm.name,
                 className: searchForm.className,
                 page: currentPage.value,
                 limit: pageSize.value
             }
-            const res = await proxy.$api.getUserList(params)
-            tableData.value = res.list.map(item => ({ ...item }))
-            total.value = res.total
+            const res = await safeApiCall(api.getUserList(params))
+            if (res) {
+                tableData.value = res.list.map((item: Student) => ({ ...item }))
+                total.value = res.total
+            }
         } catch (error) {
             ElMessage.error('数据加载失败')
         } finally {
@@ -183,7 +186,7 @@
         })
     }
 
-    const editStudent = (row) => {
+    const editStudent = (row: Student) => {
         dialogTitle.value = '编辑学生'
         Object.assign(form, row)
         dialogVisible.value = true
@@ -193,13 +196,13 @@
     }
 
     const submitForm = () => {
-        formRef.value.validate(async (valid) => {
+        formRef.value?.validate(async (valid: boolean) => {
             if (valid) {
                 try {
                     if (form.id) {
-                        await proxy.$api.editUser(form)
+                        await safeApiCall(api.editUser(form))
                     } else {
-                        await proxy.$api.addUser(form)
+                        await safeApiCall(api.addUser(form))
                     }
                     ElMessage.success('操作成功')
                     dialogVisible.value = false
@@ -211,19 +214,19 @@
         })
     }
 
-    const deleteStudent = (row) => {
+    const deleteStudent = (row: Student) => {
         ElMessageBox.confirm('确认删除该学生吗？', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
         }).then(async () => {
-            await proxy.$api.deleteUser({ id: row.id })
+            await safeApiCall(api.deleteUser({ id: row.id }))
             ElMessage.success('删除成功')
             fetchData()
         }).catch(() => { })
     }
 
-    const viewDetail = (row) => {
+    const viewDetail = (row: Student) => {
         ElMessage.info('详情功能待实现')
     }
 </script>

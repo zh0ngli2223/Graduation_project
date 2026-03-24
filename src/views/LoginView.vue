@@ -1,13 +1,14 @@
 <script setup lang="ts">
-    import { reactive, getCurrentInstance } from 'vue'
+    import { reactive } from 'vue'
     import { useRouter } from 'vue-router';
     import { useAllDataStore } from '@/stores'
     import { ElMessage } from 'element-plus'
     import type { LoginForm } from '@/types'
+    import { useApi, safeApiCall } from '@/utils/api'
 
     const store = useAllDataStore()
-    const { proxy } = getCurrentInstance();
     const router = useRouter()
+    const api = useApi()
 
     const loginForm = reactive<LoginForm>({
         username: 'admin',
@@ -16,7 +17,11 @@
 
     const login = async () => {
         try {
-            const res = await proxy!.$api.getMenu(loginForm);
+            const res = await safeApiCall(
+                api.getMenu(loginForm),
+                '登录失败'
+            )
+
             if (res && res.code === 200) {
                 store.updateMenuList(res.data.menuList)
                 store.setToken(res.data.token)

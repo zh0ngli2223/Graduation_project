@@ -40,11 +40,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, getCurrentInstance } from 'vue'
+  import { ref, onMounted } from 'vue'
   import * as echarts from 'echarts'
   import type { StatCard, ClassScore, ChartData } from '@/types'
+  import { useApi, safeApiCall } from '@/utils/api'
 
-  const { proxy } = getCurrentInstance()
+  const api = useApi()
   const countData = ref<StatCard[]>([])
   const tableData = ref<ClassScore[]>([])
   const trendChart = ref<HTMLElement | null>(null)
@@ -53,19 +54,19 @@
   onMounted(async () => {
     try {
       // 获取卡片数据
-      const countRes = await proxy!.$api.getCountData()
+      const countRes = await safeApiCall(api.getCountData())
       if (countRes && countRes.code === 200) {
         countData.value = countRes.data
       }
 
       // 获取表格数据
-      const tableRes = await proxy!.$api.getTableData()
+      const tableRes = await safeApiCall(api.getTableData())
       if (tableRes && tableRes.code === 200) {
         tableData.value = tableRes.data.tableData
       }
 
       // 获取图表数据
-      const chartRes = await proxy!.$api.getChartData()
+      const chartRes = await safeApiCall(api.getChartData())
       if (chartRes && chartRes.code === 200) {
         const { personalTrend, classDistribution } = chartRes.data
 
