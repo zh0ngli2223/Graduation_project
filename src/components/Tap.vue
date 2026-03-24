@@ -1,8 +1,8 @@
-<script setup>
-
-    import { computed, ref } from 'vue'
+<script setup lang="ts">
+    import { computed } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
     import { useAllDataStore } from '@/stores'
+    import type { Tag } from '@/types'
 
     const store = useAllDataStore()
     const route = useRoute()
@@ -10,34 +10,34 @@
 
     const tags = computed(() => store.state.tags)
 
-    const changeMenu = (tag) => {
+    const changeMenu = (tag: Tag) => {
         // 单击tab时，联动面包屑
         store.selectMenu(tag)
         // 跳转对应页面
         router.push(tag.name)
     }
 
-    const handleClose = (tag, index) => {
+    const handleClose = (tag: Tag, index: number) => {
         // 先保存当前要删除的标签名称
-        const removedName = tag.name;
+        const removedName = tag.name
 
         // 从仓库中删除标签
-        store.updateTags(tag);
+        store.updateTags(tag)
 
         // 如果删除的不是当前激活的标签，直接返回
-        if (removedName !== router.currentRoute.value.name) return;
+        if (removedName !== router.currentRoute.value.name) return
 
         // 计算新的索引位置
         // 如果删除的是最后一个标签，则切换到前一个
         // 否则切换到原来位置的标签（因为删除后后面的标签会前移）
-        const newIndex = index >= store.state.tags.length ? index - 1 : index;
+        const newIndex = index >= store.state.tags.length ? index - 1 : index
 
         // 确保索引有效
         if (newIndex >= 0 && store.state.tags[newIndex]) {
-            store.selectMenu(store.state.tags[newIndex]);
-            router.push(store.state.tags[newIndex].name);
+            store.selectMenu(store.state.tags[newIndex])
+            router.push(store.state.tags[newIndex].name)
         }
-    };
+    }
 
 </script>
 <template>

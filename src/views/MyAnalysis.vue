@@ -20,33 +20,37 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import * as echarts from 'echarts'
 
-  const trendChart = ref(null)
-  const radarChart = ref(null)
+  const trendChart = ref<HTMLElement | null>(null)
+  const radarChart = ref<HTMLElement | null>(null)
 
   onMounted(() => {
     // 模拟数据，实际可从接口获取
-    const trend = echarts.init(trendChart.value)
-    trend.setOption({
-      title: { text: '历次考试成绩趋势' },
-      xAxis: { data: ['一模', '二模', '三模', '期末'] },
-      series: [{ data: [128, 135, 142, 138], type: 'line' }]
-    })
+    if (trendChart.value) {
+      const trend = echarts.init(trendChart.value)
+      trend.setOption({
+        title: { text: '历次考试成绩趋势' },
+        xAxis: { data: ['一模', '二模', '三模', '期末'] },
+        series: [{ data: [128, 135, 142, 138], type: 'line' }]
+      })
+    }
 
-    const radar = echarts.init(radarChart.value)
-    radar.setOption({
-      title: { text: '学科能力雷达图' },
-      radar: {
-        indicator: ['语文', '数学', '英语', '物理', '化学', '生物'].map(sub => ({ name: sub, max: 150 }))
-      },
-      series: [{
-        type: 'radar',
-        data: [{ value: [115, 142, 128, 88, 92, 85] }]
-      }]
-    })
+    if (radarChart.value) {
+      const radar = echarts.init(radarChart.value)
+      radar.setOption({
+        title: { text: '学科能力雷达图' },
+        radar: {
+          indicator: ['语文', '数学', '英语', '物理', '化学', '生物'].map(sub => ({ name: sub, max: 150 }))
+        },
+        series: [{
+          type: 'radar',
+          data: [{ value: [115, 142, 128, 88, 92, 85] }]
+        }]
+      })
+    }
   })
 
   const showAppealDialog = () => {

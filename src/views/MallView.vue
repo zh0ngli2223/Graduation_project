@@ -52,19 +52,29 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted } from 'vue'
   import { ElMessage } from 'element-plus'
-  import * as XLSX from 'xlsx'  // 需要安装 xlsx
+  import * as XLSX from 'xlsx'
+  import type { Student } from '@/types'
 
-  const form = ref({
+  interface ScoreForm {
+    studentId: string
+    examName: string
+    chinese: number
+    math: number
+    english: number
+  }
+
+  const form = ref<ScoreForm>({
     studentId: '',
     examName: '',
     chinese: 0,
     math: 0,
     english: 0
   })
-  const studentOptions = ref([])
+
+  const studentOptions = ref<Student[]>([])
 
   onMounted(async () => {
     // 获取学生列表用于选择
@@ -76,16 +86,18 @@
     ElMessage.success('成绩录入成功')
   }
 
-  const handleUpload = (file) => {
+  const handleUpload = (file: File) => {
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result)
-      const workbook = XLSX.read(data, { type: 'array' })
-      const sheet = workbook.Sheets[workbook.SheetNames[0]]
-      const json = XLSX.utils.sheet_to_json(sheet)
-      console.log('导入数据', json)
-      // 调用批量导入接口
-      ElMessage.success(`成功导入 ${json.length} 条数据`)
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target?.result) {
+        const data = new Uint8Array(e.target.result as ArrayBuffer)
+        const workbook = XLSX.read(data, { type: 'array' })
+        const sheet = workbook.Sheets[workbook.SheetNames[0]]
+        const json = XLSX.utils.sheet_to_json(sheet)
+        console.log('导入数据', json)
+        // 调用批量导入接口
+        ElMessage.success(`成功导入 ${(json as any[]).length} 条数据`)
+      }
     }
     reader.readAsArrayBuffer(file)
     return false // 阻止自动上传

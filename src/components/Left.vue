@@ -1,28 +1,34 @@
-<script setup>
-    import { computed, ref } from 'vue';
+<script setup lang="ts">
+    import { computed } from 'vue';
     import { useAllDataStore } from '@/stores/index';
     import { useRouter, useRoute } from 'vue-router';
+    import type { MenuItem } from '@/types'
+
+    const stores = useAllDataStore()
 
     const list = computed(() => stores.state.menuList)
+    const isShow = computed(() => stores.state.isShow)
+    const width = computed(() => isShow.value ? '64px' : '180px')
 
     const handleOpen = () => {
-
+        // 菜单展开事件
     }
-    const handleClose = () => { }
+
+    const handleClose = () => {
+        // 菜单收起事件
+    }
 
     const router = useRouter()
     const route = useRoute()
     const activeMenu = computed(() => route.path)
-    const handleMenu = (val) => {
+
+    const handleMenu = (val: MenuItem) => {
         router.push(val.path)
         stores.selectMenu(val)
     }
 
-    const list_noChildren = computed(() => list.value.filter(item => !item.children))
-    const list_hasChildren = computed(() => list.value.filter(item => item.children))
-    const stores = useAllDataStore()
-    const isShow = computed(() => stores.state.isShow)
-    const width = computed(() => isShow.value ? '64px' : '180px')
+    const list_noChildren = computed(() => list.value.filter((item: MenuItem) => !item.children))
+    const list_hasChildren = computed(() => list.value.filter((item: MenuItem) => item.children))
 
     // console.log('111', isShow.value)
     // console.log(list_noChildren.value, list_hasChildren.value)

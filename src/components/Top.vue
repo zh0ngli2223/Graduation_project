@@ -40,7 +40,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
     import { computed, nextTick } from 'vue'
     import { useRouter } from 'vue-router'
     import { ArrowRight, ArrowDown, Menu, User, SwitchButton } from '@element-plus/icons-vue'
@@ -57,13 +57,15 @@
 
     const userName = computed(() => {
         const role = stores.state.role
-        if (role === 'admin') return '高级管理员'
-        if (role === 'teacher') return '教师'
-        if (role === 'student') return '学生'
-        return '管理员'
+        switch (role) {
+            case 'admin': return '高级管理员'
+            case 'teacher': return '教师'
+            case 'student': return '学生'
+            default: return '管理员'
+        }
     })
 
-    const handleCommand = (command) => {
+    const handleCommand = (command: string) => {
         if (command === 'logout') {
             logout()
         } else if (command === 'profile') {

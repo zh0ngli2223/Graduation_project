@@ -39,46 +39,61 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted, getCurrentInstance } from 'vue'
   import * as echarts from 'echarts'
+  import type { StatCard, ClassScore, ChartData } from '@/types'
 
   const { proxy } = getCurrentInstance()
-  const countData = ref([])
-  const tableData = ref([])
-  const trendChart = ref(null)
-  const distChart = ref(null)
+  const countData = ref<StatCard[]>([])
+  const tableData = ref<ClassScore[]>([])
+  const trendChart = ref<HTMLElement | null>(null)
+  const distChart = ref<HTMLElement | null>(null)
 
   onMounted(async () => {
-    // 获取卡片数据
-    const countRes = await proxy.$api.getCountData()
-    countData.value = countRes
+    try {
+      // 获取卡片数据
+      const countRes = await proxy!.$api.getCountData()
+      if (countRes && countRes.code === 200) {
+        countData.value = countRes.data
+      }
 
-    // 获取表格数据
-    const tableRes = await proxy.$api.getTableData()
-    tableData.value = tableRes.tableData
+      // 获取表格数据
+      const tableRes = await proxy!.$api.getTableData()
+      if (tableRes && tableRes.code === 200) {
+        tableData.value = tableRes.data.tableData
+      }
 
-    // 获取图表数据
-    const chartRes = await proxy.$api.getChartData()
-    const { personalTrend, classDistribution } = chartRes
+      // 获取图表数据
+      const chartRes = await proxy!.$api.getChartData()
+      if (chartRes && chartRes.code === 200) {
+        const { personalTrend, classDistribution } = chartRes.data
 
-    // 渲染个人趋势图（这里模拟一个班级平均趋势）
-    const trend = echarts.init(trendChart.value)
-    trend.setOption({
-      title: { text: '班级平均分趋势', left: 'center' },
-      xAxis: { data: personalTrend.exams },
-      yAxis: { name: '分数' },
-      series: [{ data: personalTrend.scores, type: 'line', smooth: true, name: '平均分' }]
-    })
+        // 渲染个人趋势图（这里模拟一个班级平均趋势）
+        if (trendChart.value) {
+          const trend = echarts.init(trendChart.value)
+          trend.setOption({
+            title: { text: '班级平均分趋势', left: 'center' },
+            xAxis: { data: personalTrend.exams },
+            yAxis: { name: '分数' },
+            series: [{ data: personalTrend.scores, type: 'line', smooth: true, name: '平均分' }]
+          })
+        }
 
-    // 渲染分数段分布
-    const dist = echarts.init(distChart.value)
-    dist.setOption({
-      title: { text: '分数段分布', left: 'center' },
-      xAxis: { data: classDistribution.segments },
-      yAxis: { name: '人数' },
-      series: [{ data: classDistribution.counts, type: 'bar', name: '人数' }]
-    })
+        // 渲染分数段分布
+        if (distChart.value) {
+          const dist = echarts.init(distChart.value)
+          dist.setOption({
+            title: { text: '分数段分布', left: 'center' },
+            xAxis: { data: classDistribution.segments },
+            yAxis: { name: '人数' },
+            series: [{ data: classDistribution.counts, type: 'bar', name: '人数' }]
+          })
+        }
+      }
+    } catch (error) {
+      console.error('数据加载失败:', error)
+    }
   })
 </script>
 

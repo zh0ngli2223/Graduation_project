@@ -1,33 +1,35 @@
-<script setup>
-
+<script setup lang="ts">
     import { reactive, getCurrentInstance } from 'vue'
     import { useRouter } from 'vue-router';
     import { useAllDataStore } from '@/stores'
     import { ElMessage } from 'element-plus'
-
+    import type { LoginForm } from '@/types'
 
     const store = useAllDataStore()
     const { proxy } = getCurrentInstance();
     const router = useRouter()
-    const loginForm = reactive({
+
+    const loginForm = reactive<LoginForm>({
         username: 'admin',
         password: 'admin',
     });
 
     const login = async () => {
         try {
-            const res = await proxy.$api.getMenu(loginForm);
-            if (res) {
-                store.updateMenuList(res.menuList)
-                store.setToken(res.token)
-                store.setRole(res.role)
-                localStorage.setItem('token', res.token)
-                localStorage.setItem('menuList', JSON.stringify(res.menuList))
-                localStorage.setItem('role', res.role)
+            const res = await proxy!.$api.getMenu(loginForm);
+            if (res && res.code === 200) {
+                store.updateMenuList(res.data.menuList)
+                store.setToken(res.data.token)
+                store.setRole(res.data.role)
+                localStorage.setItem('token', res.data.token)
+                localStorage.setItem('menuList', JSON.stringify(res.data.menuList))
+                localStorage.setItem('role', res.data.role)
                 router.push("/home")
+            } else {
+                ElMessage.error(res?.data?.message || '登录失败')
             }
         } catch (error) {
-            ElMessage.error(error || '登录失败，请检查用户名或密码')
+            ElMessage.error('登录失败，请检查用户名或密码')
         }
     }
 </script>

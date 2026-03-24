@@ -25,29 +25,31 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
+  import type { Appeal } from '@/types'
 
-  const appealList = ref([
+  const appealList = ref<Appeal[]>([
     {
-      id: 1,
-      studentName: '张三',
-      examName: '一模',
+      id: '1',
+      studentId: '001',
       subject: '数学',
       originalScore: 85,
-      appealReason: '感觉分数计算有误',
-      status: '待处理'
-    },
-    // 更多模拟数据...
+      appealedScore: 90,
+      reason: '感觉分数计算有误',
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    }
   ])
 
-  const handleApprove = (row) => {
-    row.status = '已处理'
+  const handleApprove = (row: Appeal) => {
+    row.status = 'approved'
     ElMessage.success('申诉已通过')
   }
-  const handleReject = (row) => {
-    row.status = '已驳回'
+
+  const handleReject = (row: Appeal) => {
+    row.status = 'rejected'
     ElMessage.warning('申诉已驳回')
   }
 </script>

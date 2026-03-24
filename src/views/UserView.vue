@@ -94,18 +94,19 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
     import { ref, reactive, getCurrentInstance, nextTick } from 'vue'
     import { ElMessage, ElMessageBox } from 'element-plus'
+    import type { Student, StudentQueryParams, StudentForm, SearchForm } from '@/types'
 
     const { proxy } = getCurrentInstance()
-    const tableData = ref([])
+    const tableData = ref<Student[]>([])
     const total = ref(0)
     const pageSize = ref(10)
     const currentPage = ref(1)
     const loading = ref(false)
 
-    const searchForm = reactive({
+    const searchForm = reactive<SearchForm>({
         name: '',
         className: ''
     })
@@ -140,7 +141,7 @@
         searchForm.className = ''
         handleSearch()
     }
-    const handlePageChange = (page) => {
+    const handlePageChange = (page: number) => {
         currentPage.value = page
         fetchData()
     }
@@ -148,8 +149,8 @@
     // 对话框相关
     const dialogVisible = ref(false)
     const dialogTitle = ref('新增学生')
-    const formRef = ref()
-    const form = reactive({
+    const formRef = ref<HTMLFormElement | null>(null)
+    const form = reactive<StudentForm>({
         id: '',
         name: '',
         studentNo: '',
