@@ -20,8 +20,8 @@ service.interceptors.response.use(
         const { code } = response
 
         if (code === 200) {
-            // 成功时返回 data 部分
-            return response.data
+            // 成功时返回完整的响应对象
+            return response
         } else {
             // 尝试从不同位置获取错误消息
             const errorMsg =
