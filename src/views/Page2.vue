@@ -8,8 +8,8 @@
       <el-table-column prop="appealReason" label="申诉理由" show-overflow-tooltip />
       <el-table-column prop="status" label="状态">
         <template #default="scope">
-          <el-tag :type="scope.row.status === '已处理' ? 'success' : 'warning'">
-            {{ scope.row.status }}
+          <el-tag :type="getStatusType(scope.row.status)">
+            {{ getStatusText(scope.row.status) }}
           </el-tag>
         </template>
       </el-table-column>
@@ -51,5 +51,23 @@
   const handleReject = (row: Appeal) => {
     row.status = 'rejected'
     ElMessage.warning('申诉已驳回')
+  }
+
+  const getStatusType = (status: string) => {
+    switch (status) {
+      case 'approved': return 'success'
+      case 'rejected': return 'danger'
+      case 'pending': return 'warning'
+      default: return 'info'
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'approved': return '已通过'
+      case 'rejected': return '已驳回'
+      case 'pending': return '待处理'
+      default: return '未知状态'
+    }
   }
 </script>

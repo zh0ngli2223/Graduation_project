@@ -123,9 +123,9 @@
                 limit: pageSize.value
             }
             const res = await safeApiCall(api.getUserList(params))
-            if (res) {
-                tableData.value = res.list.map((item: Student) => ({ ...item }))
-                total.value = res.total
+            if (res && res.code === 200) {
+                tableData.value = res.data.list.map((item: Student) => ({ ...item }))
+                total.value = res.data.total
             }
         } catch (error) {
             ElMessage.error('数据加载失败')
@@ -200,13 +200,24 @@
             if (valid) {
                 try {
                     if (form.id) {
-                        await safeApiCall(api.editUser(form))
+                        const res = await safeApiCall(api.editUser(form))
+                        if (res && res.code === 200) {
+                            ElMessage.success('编辑成功')
+                            dialogVisible.value = false
+                            fetchData()
+                        } else {
+                            ElMessage.error('编辑失败')
+                        }
                     } else {
-                        await safeApiCall(api.addUser(form))
+                        const res = await safeApiCall(api.addUser(form))
+                        if (res && res.code === 200) {
+                            ElMessage.success('添加成功')
+                            dialogVisible.value = false
+                            fetchData()
+                        } else {
+                            ElMessage.error('添加失败')
+                        }
                     }
-                    ElMessage.success('操作成功')
-                    dialogVisible.value = false
-                    fetchData()
                 } catch (error) {
                     ElMessage.error('操作失败')
                 }
@@ -220,9 +231,13 @@
             cancelButtonText: '取消',
             type: 'warning'
         }).then(async () => {
-            await safeApiCall(api.deleteUser({ id: row.id }))
-            ElMessage.success('删除成功')
-            fetchData()
+            const res = await safeApiCall(api.deleteUser({ id: row.id }))
+            if (res && res.code === 200) {
+                ElMessage.success('删除成功')
+                fetchData()
+            } else {
+                ElMessage.error('删除失败')
+            }
         }).catch(() => { })
     }
 

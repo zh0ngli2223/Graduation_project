@@ -103,10 +103,17 @@ export interface StudentQueryParams {
   limit: number
 }
 
-// 学生列表响应
-export interface StudentListResponse {
+// 学生列表响应数据
+export interface StudentListData {
   list: Student[]
   total: number
+}
+
+// 学生列表响应
+export interface StudentListResponse {
+  code: number
+  data: StudentListData
+  message?: string
 }
 
 // 标签页类型
