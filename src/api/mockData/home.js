@@ -8,7 +8,7 @@ export default {
             return {
                 code: 200,
                 data: [
-                    { name: '我的总分', value: 138, icon: 'Trophy', color: '#2ec7c9' },
+                    { name: '我的总分', value: 642, icon: 'Trophy', color: '#2ec7c9' },
                     { name: '班级排名', value: '15/45', icon: 'Medal', color: '#ffb980' },
                     { name: '进步幅度', value: '+7分', icon: 'TrendCharts', color: '#5ab1ef' },
                     { name: '目标达成', value: '85%', icon: 'Target', color: '#2ec7c9' },
@@ -16,13 +16,26 @@ export default {
             }
         }
 
+        // 教师端统计数据 - 基于三个班级的实际数据计算
+        const totalStudents = 135  // 3个班 * 45人
+        const class1Avg = 114.9  // 高三(1)班期末平均分
+        const class2Avg = 116.3  // 高三(2)班期末平均分
+        const class3Avg = 108.7  // 高三(3)班期末平均分
+        const overallAvg = ((class1Avg + class2Avg + class3Avg) / 3).toFixed(1)
+
+        // 计算最高分（假设最高分学生各科都很优秀）
+        const maxScore = 145 + 140 + 140 + 100 + 100 + 100  // 各科满分相加
+
+        // 计算优秀率（三个班级平均）
+        const excellentRate = ((34 + 38 + 34) / 3).toFixed(1) + '%'
+
         return {
             code: 200,
             data: [
-                { name: '参考人数', value: 568, icon: 'UserFilled', color: '#2ec7c9' },
-                { name: '平均分', value: 129.8, icon: 'TrendCharts', color: '#ffb980' },
-                { name: '最高分', value: 298, icon: 'GoldMedal', color: '#5ab1ef' },
-                { name: '优秀率', value: '38.2%', icon: 'DataLine', color: '#2ec7c9' },
+                { name: '参考人数', value: totalStudents, icon: 'UserFilled', color: '#2ec7c9' },
+                { name: '平均分', value: parseFloat(overallAvg), icon: 'TrendCharts', color: '#ffb980' },
+                { name: '最高分', value: maxScore, icon: 'GoldMedal', color: '#5ab1ef' },
+                { name: '优秀率', value: excellentRate, icon: 'DataLine', color: '#2ec7c9' },
             ]
         }
     },
@@ -32,10 +45,27 @@ export default {
         code: 200,
         data: {
             tableData: [
-                { className: '高三(1)班', avgScore: 128.5, passRate: '92.3%', excellentRate: '34.2%' },
-                { className: '高三(2)班', avgScore: 131.2, passRate: '94.1%', excellentRate: '41.7%' },
-                { className: '高三(3)班', avgScore: 119.8, passRate: '85.6%', excellentRate: '22.5%' },
-                { className: '高三(4)班', avgScore: 135.4, passRate: '96.8%', excellentRate: '48.3%' },
+                {
+                    className: '高三(1)班',
+                    avgScore: 114.9,
+                    passRate: '93.3%',
+                    excellentRate: '34.2%',
+                    studentCount: 45
+                },
+                {
+                    className: '高三(2)班',
+                    avgScore: 116.3,
+                    passRate: '95.6%',
+                    excellentRate: '38.9%',
+                    studentCount: 45
+                },
+                {
+                    className: '高三(3)班',
+                    avgScore: 108.7,
+                    passRate: '86.7%',
+                    excellentRate: '28.9%',
+                    studentCount: 45
+                },
             ]
         }
     }),
@@ -90,23 +120,50 @@ export default {
             }
         }
 
+        // 教师端数据 - 基于三个班级的实际统计数据
+        const teacherData = {
+            // 三个班级在各次考试中的平均分趋势
+            personalTrend: {
+                exams: ['一模', '二模', '三模', '期末'],
+                scores: [112.8, 114.4, 116.1, 116.6],  // 三个班级整体平均分趋势
+                subjectScores: [
+                    // 一模各科平均分
+                    {
+                        subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
+                        scores: [112.8, 106.1, 99.2, 75.4, 78.8, 82.3]
+                    },
+                    // 二模各科平均分
+                    {
+                        subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
+                        scores: [114.4, 107.7, 101.6, 77.4, 80.5, 84.2]
+                    },
+                    // 三模各科平均分
+                    {
+                        subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
+                        scores: [116.0, 109.2, 103.4, 78.9, 82.0, 85.6]
+                    },
+                    // 期末各科平均分
+                    {
+                        subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
+                        scores: [117.3, 110.6, 105.0, 80.3, 83.5, 87.0]
+                    }
+                ]
+            },
+            // 期末考试成绩分布（基于实际学生数据）
+            classDistribution: {
+                segments: ['<90', '90-120', '120-150', '150-180', '>180'],
+                counts: [8, 25, 42, 38, 22]  // 基于135名学生的分布
+            },
+            // 期末考试各科平均分雷达图数据
+            subjectRadar: {
+                subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
+                scores: [117.3, 110.6, 105.0, 80.3, 83.5, 87.0]  // 三个班级期末平均分
+            }
+        }
+
         return {
             code: 200,
-            data: {
-                personalTrend: {
-                    exams: ['一模', '二模', '三模', '期末'],
-                    scores: [128, 135, 142, 138],  // 班级平均成绩
-                    subjectScores: studentExamData.subjectScores  // 也提供给老师/管理员
-                },
-                classDistribution: {
-                    segments: ['<90', '90-120', '120-150', '>150'],
-                    counts: [5, 18, 24, 8]
-                },
-                subjectRadar: {
-                    subjects: ['语文', '数学', '英语', '物理', '化学', '生物'],
-                    scores: [115, 142, 128, 78, 82, 85]  // 班级各科平均分（理化生满分100）
-                }
-            }
+            data: teacherData
         }
     }
 }
