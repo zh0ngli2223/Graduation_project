@@ -1,5 +1,4 @@
 import axios from 'axios'
-import Elmessage from 'element-plus'
 const service = axios.create()
 const NET_ERROR = '网络错误！！！'
 // 请求拦截器

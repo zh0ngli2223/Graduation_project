@@ -23,7 +23,7 @@ Mock.mock(/\/appeal\/process/, 'post', appealApi.processAppeal)
 Mock.mock(/\/appeal\/my/, 'post', appealApi.getMyAppeals)
 
 // 班级成绩统计相关API
-Mock.mock(/\/class-scores\/stats/, 'post', classScoresApi.getClassScoreStats)
-Mock.mock(/\/class-scores\/classes/, 'get', classScoresApi.getClassList)
-Mock.mock(/\/class-scores\/exams/, 'get', classScoresApi.getExamList)
-Mock.mock(/\/class-scores\/students/, 'post', classScoresApi.getStudentScores)
+Mock.mock(/class-scores\/stats/, 'post', classScoresApi.getClassScoreStats)
+Mock.mock(/class-scores\/classes/, 'get', classScoresApi.getClassList)
+Mock.mock(/class-scores\/exams/, 'get', classScoresApi.getExamList)
+Mock.mock(/class-scores\/students/, 'post', classScoresApi.getStudentScores)

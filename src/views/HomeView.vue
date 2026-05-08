@@ -15,7 +15,7 @@
               <el-option v-for="className in classList" :key="className" :label="className" :value="className" />
             </el-select>
             <el-select v-model="selectedExam" placeholder="选择考试" style="width: 130px" @change="loadAnalysisData" class="modern-select">
-              <el-option v-for="exam in examList" :key="exam" :label="exam" :value="exam" />
+              <el-option v-for="(exam, index) in examList" :key="exam" :label="exam" :value="index" />
             </el-select>
           </div>
         </div>
@@ -199,7 +199,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted, nextTick } from 'vue'
+  import { ref, onMounted, nextTick, watch } from 'vue'
   import * as echarts from 'echarts'
   import type { StatCard, ClassScore, ChartData, ClassScoreStatsResponse, StudentScore, ClassScoreStats } from '@/types'
   import { useApi, safeApiCall } from '@/utils/api'
@@ -215,11 +215,11 @@
   const scienceChart = ref<HTMLElement | null>(null)
 
   const isStudent = store.state.role === 'student'
-  const selectedExam = ref('期末') // 默认选择最近一次考试（期末）
+  const selectedExam = ref(3) // 默认选择最近一次考试（期末）索引
   const chartResponse = ref<ChartData | null>(null) // 存储图表响应数据
 
   // 班级成绩分析相关变量
-  const selectedClass = ref('')
+  const selectedClass = ref('高三(1)班')  // 默认选择第一个班级
   const selectedSubject = ref('')
   const classList = ref<string[]>([])
   const examList = ref<string[]>([])
@@ -232,8 +232,8 @@
   const lowestChart = ref<HTMLElement | null>(null)
 
   // 学生排名分析相关变量
-  const rankingClass = ref('')
-  const rankingExam = ref('')
+  const rankingClass = ref('高三(1)班')  // 默认选择第一个班级
+  const rankingExam = ref('期末')  // 默认选择期末考试
   const rankingStatsData = ref<ClassScoreStats | null>(null)
   const rankingStudentScores = ref<StudentScore[]>([])
 
@@ -260,17 +260,22 @@
       const examRes = await safeApiCall(api.getExamList())
       if (examRes && examRes.code === 200) {
         examList.value = examRes.data
-        if (examList.value.length > 0 && !selectedExam.value) {
-          selectedExam.value = examList.value[examList.value.length - 1] // 默认选择最后一次考试
+        if (examList.value.length > 0 && selectedExam.value === 3) {
+          selectedExam.value = examList.value.length - 1 // 默认选择最后一次考试的索引
         }
       }
 
       // 如果没有选择考试，使用默认值
-      const currentExam = selectedExam.value || (examList.value.length > 0 ? examList.value[examList.value.length - 1] : '期末')
+      const currentExam = examList.value.length > 0 && selectedExam.value < examList.value.length
+        ? examList.value[selectedExam.value]
+        : (examList.value.length > 0 ? examList.value[examList.value.length - 1] : '期末')
+
+      // 如果没有选择班级，使用默认值
+      const currentClass = selectedClass.value || (classList.value.length > 0 ? classList.value[0] : '高三(1)班')
 
       // 获取班级统计信息
       const statsRes = await safeApiCall(api.getClassScoreStats({
-        className: selectedClass.value,
+        className: currentClass,
         exam: currentExam
       }))
 
@@ -280,7 +285,7 @@
 
       // 获取学生详细成绩
       const scoresRes = await safeApiCall(api.getStudentScores({
-        className: selectedClass.value,
+        className: currentClass,
         exam: currentExam
       }))
 
@@ -300,9 +305,12 @@
       // 如果没有选择考试，使用默认值
       const currentExam = rankingExam.value || (examList.value.length > 0 ? examList.value[examList.value.length - 1] : '期末')
 
+      // 如果没有选择班级，使用默认值
+      const currentRankingClass = rankingClass.value || (classList.value.length > 0 ? classList.value[0] : '高三(1)班')
+
       // 获取班级统计信息
       const statsRes = await safeApiCall(api.getClassScoreStats({
-        className: rankingClass.value,
+        className: currentRankingClass,
         exam: currentExam
       }))
 
@@ -312,7 +320,7 @@
 
       // 获取学生详细成绩
       const scoresRes = await safeApiCall(api.getStudentScores({
-        className: rankingClass.value,
+        className: currentRankingClass,
         exam: currentExam
       }))
 
@@ -359,7 +367,7 @@
     }
 
     console.log('Final scores:', currentScores, 'subjects:', currentSubjects)
-    const examName = personalTrend?.exams?.[selectedExam.value] || '未知考试'
+    const examName = examList.value[selectedExam.value] || '未知考试'
 
     // 分割数据为语数英和理化生
     const { chineseMathEnglish, science } = splitSubjectsData(currentScores, currentSubjects)
@@ -1156,6 +1164,8 @@
           }
 
           // 班级成绩分析图表会在 loadAnalysisData 中初始化
+          // 同时也需要初始化教师端的图表
+          updateCharts(personalTrend, subjectRadar)
         }
       }
     } catch (error) {
@@ -1167,6 +1177,13 @@
 
     // 加载排名分析数据
     loadRankingData()
+  })
+
+  // 监听考试选择变化（仅学生端）
+  watch(selectedExam, (newValue, oldValue) => {
+    if (newValue !== oldValue && isStudent) {
+      handleExamChange()
+    }
   })
 
   // 更新班级平均分图表
