@@ -24,5 +24,39 @@ export default {
     },
     getMenu(data) {
         return request({ url: '/permission/getMenu', method: 'post', data })
+    },
+
+    // 申诉相关API
+    getAppealList(data) {
+        return request({ url: '/appeal/list', method: 'post', data })
+    },
+
+    submitAppeal(data) {
+        return request({ url: '/appeal/submit', method: 'post', data })
+    },
+
+    processAppeal(data) {
+        return request({ url: '/appeal/process', method: 'post', data })
+    },
+
+    getMyAppeals(data) {
+        return request({ url: '/appeal/my', method: 'post', data })
+    },
+
+    // 班级成绩统计相关API
+    getClassScoreStats(data) {
+        return request({ url: '/class-scores/stats', method: 'post', data })
+    },
+
+    getClassList() {
+        return request({ url: '/class-scores/classes', method: 'get' })
+    },
+
+    getExamList() {
+        return request({ url: '/class-scores/exams', method: 'get' })
+    },
+
+    getStudentScores(data) {
+        return request({ url: '/class-scores/students', method: 'post', data })
     }
 }

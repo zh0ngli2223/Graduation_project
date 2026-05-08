@@ -16,18 +16,23 @@
             <el-dropdown trigger="click" class="user-dropdown" @command="handleCommand">
                 <span class="user-link">
                     <img src="@/assets/冰菓1.jpg" class="user-avatar" />
-                    <span class="user-name">{{ userName }}</span>
+                    <span class="user-info">
+                        <span class="user-name">{{ userName }}</span>
+                        <span class="user-role">{{ stores.state.role }}</span>
+                    </span>
                     <el-icon class="dropdown-icon">
                         <ArrowDown />
                     </el-icon>
                 </span>
                 <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item command="profile">
-                            <el-icon>
-                                <User />
-                            </el-icon>个人信息
-                        </el-dropdown-item>
+                    <el-dropdown-menu class="user-dropdown-menu">
+                        <div class="user-dropdown-header">
+                            <img src="@/assets/冰菓1.jpg" class="dropdown-avatar" />
+                            <div class="dropdown-user-info">
+                                <div class="dropdown-user-name">{{ userName }}</div>
+                                <div class="dropdown-user-role">{{ stores.state.role }}</div>
+                            </div>
+                        </div>
                         <el-dropdown-item command="logout" divided>
                             <el-icon>
                                 <SwitchButton />
@@ -60,7 +65,7 @@
         switch (role) {
             case 'admin': return '高级管理员'
             case 'teacher': return '教师'
-            case 'student': return '学生'
+            case 'student': return '郭玉峰'  // 显示具体学生姓名
             default: return '管理员'
         }
     })
@@ -124,11 +129,21 @@
         border-radius: 8px;
         color: #fff;
         transition: all 0.2s;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .collapse-btn:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 208, 75, 0.2);
         color: #ffd04b;
+        transform: scale(1.05);
+    }
+
+    .collapse-btn:active {
+        transform: scale(0.95);
     }
 
     .collapse-btn .el-icon {
@@ -137,13 +152,14 @@
 
     .platform-name {
         font-size: 16px;
-        font-weight: 500;
+        font-weight: 600;
         letter-spacing: 1px;
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         padding-right: 16px;
         line-height: 30px;
         color: #ffd04b;
         white-space: nowrap;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .breadcrumb {
@@ -184,9 +200,18 @@
         height: 4px;
     }
 
+    .tags-wrapper::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 2px;
+    }
+
     .tags-wrapper::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.2);
         border-radius: 2px;
+    }
+
+    .tags-wrapper::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 208, 75, 0.3);
     }
 
     /* 标签页组件内部样式调整，使其更适合顶部栏 */
@@ -209,25 +234,32 @@
         height: 32px;
         line-height: 30px;
         padding: 0 12px;
-    }
+        font-size: 13px;
+        font-weight: 500;
 
-    :deep(.el-tag:hover) {
-        background: rgba(255, 255, 255, 0.2);
-        color: #ffd04b;
+        &:hover {
+            background: rgba(255, 208, 75, 0.2);
+            color: #ffd04b;
+            transform: translateY(-1px);
+        }
     }
 
     :deep(.el-tag.el-tag--dark) {
-        background: #ffd04b;
+        background: linear-gradient(135deg, #ffd04b 0%, #ffab00 100%);
         color: #333;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(255, 208, 75, 0.3);
     }
 
     :deep(.el-tag .el-tag__close) {
         color: #e0e0e0;
+        transition: all 0.2s;
     }
 
     :deep(.el-tag .el-tag__close:hover) {
-        background-color: rgba(255, 255, 255, 0.3);
-        color: #fff;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #ffd04b;
+        transform: scale(1.1);
     }
 
     .right-section {
@@ -246,27 +278,42 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 4px 12px 4px 6px;
+        padding: 4px 12px 4px 8px;
         background: rgba(255, 255, 255, 0.05);
         border-radius: 30px;
-        transition: background 0.2s;
+        transition: all 0.2s;
+        cursor: pointer;
     }
 
     .user-link:hover {
-        background: rgba(255, 255, 255, 0.15);
+        background: rgba(255, 208, 75, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .user-link:active {
+        transform: translateY(0);
     }
 
     .user-avatar {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         border: 2px solid #ffd04b;
         object-fit: cover;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
     }
 
     .user-name {
         font-size: 14px;
+        font-weight: 500;
         color: #fff;
         max-width: 80px;
         overflow: hidden;
@@ -274,8 +321,84 @@
         white-space: nowrap;
     }
 
+    .user-role {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
     .dropdown-icon {
         font-size: 14px;
-        color: #aaa;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.2s;
+    }
+
+    .user-link:hover .dropdown-icon {
+        color: #ffd04b;
+    }
+
+    /* 下拉菜单样式 */
+    :deep(.el-dropdown-menu) {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        padding: 8px;
+    }
+
+    .user-dropdown-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 8px;
+    }
+
+    .dropdown-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ffd04b;
+        object-fit: cover;
+    }
+
+    .dropdown-user-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .dropdown-user-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .dropdown-user-role {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    :deep(.el-dropdown-menu__item) {
+        border-radius: 8px;
+        margin: 2px 0;
+        transition: all 0.2s;
+
+        &:hover {
+            background-color: rgba(24, 144, 255, 0.1);
+        }
+
+        &:not(.is-disabled):hover {
+            color: #1890ff;
+        }
+    }
+
+    :deep(.el-dropdown-menu__item--divided) {
+        border-top-color: #f0f0f0;
+        margin-top: 8px;
+        padding-top: 8px;
     }
 </style>

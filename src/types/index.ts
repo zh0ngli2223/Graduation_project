@@ -70,6 +70,10 @@ export interface ChartData {
     personalTrend: {
       exams: string[]
       scores: number[]
+      subjectScores?: Array<{
+        subjects: string[]
+        scores: number[]
+      }>
     }
     classDistribution: {
       segments: string[]
@@ -79,6 +83,7 @@ export interface ChartData {
       subjects: string[]
       scores: number[]
     }
+    allExamData?: any
   }
 }
 
@@ -166,13 +171,52 @@ export interface PaginationResponse<T> {
 export interface Appeal {
   id: string
   studentId: string
+  studentName?: string
+  className?: string
+  examName: string
   subject: string
   originalScore: number
-  appealedScore: number
+  appealedScore?: number
   reason: string
   status: 'pending' | 'approved' | 'rejected'
   createdAt: string
   updatedAt?: string
+  processedBy?: string
+  processNote?: string
+}
+
+// 申诉表单类型
+export interface AppealForm {
+  examName: string
+  subject: string
+  originalScore: number
+  appealedScore: number
+  reason: string
+}
+
+// 申诉处理表单
+export interface AppealProcessForm {
+  status: 'approved' | 'rejected'
+  processNote: string
+}
+
+// 申诉查询参数
+export interface AppealQueryParams {
+  studentId?: string
+  status?: string
+  subject?: string
+  page: number
+  limit: number
+}
+
+// 申诉列表响应
+export interface AppealListResponse {
+  code: number
+  data: {
+    list: Appeal[]
+    total: number
+  }
+  message?: string
 }
 
 // 成绩类型
@@ -192,4 +236,41 @@ export interface ClassInfo {
   teacherId?: string
   description?: string
   studentCount?: number
+}
+
+// 班级成绩统计相关类型
+export interface ScoreDistribution {
+  '不及格': number
+  '及格': number
+  '优秀': number
+}
+
+export interface SubjectStat {
+  subject: string
+  average: number
+  distribution: ScoreDistribution
+  studentCount: number
+}
+
+export interface ClassScoreStats {
+  className: string
+  exam: string
+  stats: SubjectStat[]
+  totalStudents: number
+}
+
+export interface ClassScoreStatsResponse {
+  code: number
+  data: ClassScoreStats
+}
+
+// 学生成绩详情类型
+export interface StudentScore {
+  id: string
+  studentNo: string
+  name: string
+  className: string
+  currentExamScores: Record<string, number>
+  totalScore: number
+  rank: number
 }

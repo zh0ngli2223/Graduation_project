@@ -14,10 +14,13 @@ const router = createRouter({
         { path: 'score', name: 'score', component: () => import('@/views/MallView.vue') },       // 成绩管理
         { path: 'classAnalysis', name: 'classAnalysis', component: () => import('@/views/Page1.vue') }, // 班级分析
         { path: 'student', name: 'student', component: () => import('@/views/UserView.vue') },    // 学生管理
-        { path: 'appeal', name: 'appeal', component: () => import('@/views/Page2.vue') },          // 申诉处理
+        { path: 'appeal', name: 'appeal', component: () => import('@/views/Page2.vue') },          // 申诉处理（教师端）
+        { path: 'my-appeals', name: 'myAppeals', component: () => import('@/views/MyAppeals.vue') },    // 我的申诉（学生端）
+        { path: 'appeal-submit', name: 'appealSubmit', component: () => import('@/views/AppealSubmit.vue') }, // 申诉提交（学生端）
         { path: 'report/class', name: 'classReport', component: () => import('@/views/Page1.vue') }, // 班级报告（可复用分析页）
         { path: 'report/school', name: 'schoolReport', component: () => import('@/views/HomeView.vue') }, // 校级报告（暂用首页）
         { path: 'myAnalysis', name: 'myAnalysis', component: () => import('@/views/MyAnalysis.vue') },    // 个人分析
+        { path: 'class-score-analysis', name: 'classScoreAnalysis', component: () => import('@/views/ClassScoreAnalysis.vue') }, // 班级成绩分析
       ]
     },
     {

@@ -9,7 +9,11 @@ import type {
   StatCard,
   ClassScore,
   TableResponse,
-  StudentForm
+  StudentForm,
+  Appeal,
+  AppealForm,
+  ClassScoreStats,
+  StudentScore
 } from './index'
 
 // API实例类型
@@ -29,6 +33,16 @@ export interface ApiInstance {
   addUser(data: StudentForm): Promise<ApiResponse>
   editUser(data: StudentForm): Promise<ApiResponse>
   getMenu(data: LoginForm): Promise<LoginResponse>
+  // 申诉相关API
+  getAppealList(data: any): Promise<ApiResponse<{ list: Appeal[], total: number }>>
+  getMyAppeals(data: any): Promise<ApiResponse<{ list: Appeal[], total: number }>>
+  submitAppeal(data: AppealForm): Promise<ApiResponse>
+  processAppeal(data: { id: string, status: string, processNote?: string }): Promise<ApiResponse>
+  // 班级成绩统计相关API
+  getClassScoreStats(data: { className?: string, exam: string }): Promise<ApiResponse<ClassScoreStats>>
+  getClassList(): Promise<ApiResponse<string[]>>
+  getExamList(): Promise<ApiResponse<string[]>>
+  getStudentScores(data: { className?: string, exam: string, page?: number, limit?: number }): Promise<ApiResponse<{ list: StudentScore[], total: number }>>
 }
 
 // 请求配置类型

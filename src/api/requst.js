@@ -6,6 +6,14 @@ const NET_ERROR = '网络错误！！！'
 service.interceptors.request.use(
     function (config) {
         console.log('拦截的config', config.data)
+        // 添加用户角色信息到请求头
+        const role = localStorage.getItem('role')
+        if (role) {
+            config.headers = {
+                ...config.headers,
+                role: role
+            }
+        }
         return config
     },
     function (error) {

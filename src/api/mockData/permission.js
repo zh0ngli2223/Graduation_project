@@ -12,6 +12,7 @@ export default {
                         { path: '/home', name: 'home', label: '首页', icon: 'House', url: 'Home' },
                         { path: '/score', name: 'score', label: '成绩管理', icon: 'Edit', url: 'ScoreManage' },
                         { path: '/classAnalysis', name: 'classAnalysis', label: '班级分析', icon: 'DataBoard', url: 'ClassAnalysis' },
+                        { path: '/class-score-analysis', name: 'classScoreAnalysis', label: '班级成绩分析', icon: 'DataAnalysis', url: 'ClassScoreAnalysis' },
                         { path: '/student', name: 'student', label: '学生管理', icon: 'User', url: 'StudentManage' },
                         { path: '/appeal', name: 'appeal', label: '申诉处理', icon: 'MessageBox', url: 'AppealManage' },
                         {
@@ -35,6 +36,7 @@ export default {
                         { path: '/home', name: 'home', label: '首页', icon: 'House', url: 'Home' },
                         { path: '/score', name: 'score', label: '成绩管理', icon: 'Edit', url: 'ScoreManage' },
                         { path: '/classAnalysis', name: 'classAnalysis', label: '班级分析', icon: 'DataBoard', url: 'ClassAnalysis' },
+                        { path: '/class-score-analysis', name: 'classScoreAnalysis', label: '班级成绩分析', icon: 'DataAnalysis', url: 'ClassScoreAnalysis' },
                         { path: '/appeal', name: 'appeal', label: '申诉处理', icon: 'MessageBox', url: 'AppealManage' }
                     ],
                     token: Mock.Random.guid(),
@@ -49,7 +51,13 @@ export default {
                     menuList: [
                         { path: '/home', name: 'home', label: '首页', icon: 'House', url: 'Home' },
                         { path: '/myAnalysis', name: 'myAnalysis', label: '我的分析', icon: 'PieChart', url: 'MyAnalysis' },
-                        { path: '/appeal', name: 'appeal', label: '我的申诉', icon: 'MessageBox', url: 'MyAppeal' }
+                        {
+                            path: 'appeal', label: '成绩申诉', icon: 'MessageBox',
+                            children: [
+                                { path: '/appeal-submit', name: 'appealSubmit', label: '发起申诉', icon: 'Edit', url: 'AppealSubmit' },
+                                { path: '/my-appeals', name: 'myAppeals', label: '我的申诉', icon: 'List', url: 'MyAppeal' }
+                            ]
+                        }
                     ],
                     token: Mock.Random.guid(),
                     role: 'student',
